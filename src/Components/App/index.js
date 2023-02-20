@@ -7,7 +7,7 @@ import { LOGGED_IN, LOGGED_OUT, LOGIN_FAILURE } from '../../actions/auth';
 function App() {
     const dispatch = useDispatch();
     async function fetchUserData (){
-        // HERE WE TRY TO FETCH USER DATA WHEN APP IS STARTED.
+        // HERE WE TRY TO FETCH USER DATA WHEN APP IS STARTED
         // IF USER IS ALREADY LOGGED IN - DATA WILL RETURN AND WE UPDATE STATE ACCORDINGLY.
         // OTHERWISE - STATE STARTS AS LOGGED OUT AND WE WILL BE REDIRECTED TO LOGIN PAGE.
 
