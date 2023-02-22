@@ -12,7 +12,7 @@ function AppBar() {
 
     const performLogout = async () => {
         try {
-            dispatch({type: LOGOUT});
+            dispatch({ type: LOGOUT });
 
             // HERE WE SHOULD CALL LOGOUT API. EXAMPLE:
             // const response = await axios.delete(process.env.API_SERVER_END_POINT + '/logout', { withCredentials: true });
@@ -21,11 +21,11 @@ function AppBar() {
             //     history.push('/login')
             // }
 
-            dispatch({type: LOGGED_OUT});
-            history.push('/login');   
+            dispatch({ type: LOGGED_OUT });
+            history.push('/login');
         } catch (error) {
             console.log('error during logging out: ' + error);
-            dispatch({type: LOGOUT_FAILURE, payload: error});
+            dispatch({ type: LOGOUT_FAILURE, payload: error });
         }
     }
 
@@ -34,13 +34,17 @@ function AppBar() {
             <Wrapper>
                 <ul>
                     <li><Link to='/'> Home </Link></li>
-                    <li style={{ float: 'right' }}><Link className="active" onClick={performLogout}>Logout</Link></li>
+                    <li style={{ float: 'right' }}>
+                        <Link className="active" onClick={performLogout}>
+                            Logout
+                        </Link>
+                    </li>
                 </ul>
             </Wrapper>
         )
     }
-    else{
-        return(<></>)
+    else {
+        return (<></>)
     }
 }
 
