@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
     const auth = useSelector(state => state.auth)
-    const history = useHistory()
+    const navigate = useNavigate()
 
     useEffect(() => {
         // HERE WE CHECK AUTH STATE AND REDIRECT IN CASE WE ARE NOT LOGGED IN
         if (!auth.isLogged) {
-            history.push('/login');
+            navigate('/login');
         }
     });
 

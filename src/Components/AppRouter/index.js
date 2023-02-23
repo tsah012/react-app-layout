@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from '../Login';
 import AppBar from '../AppBar';
 import Home from '../Home';
@@ -10,17 +10,11 @@ function AppRouter() {
     return (
         <Router>
             <AppBar />
-            <Switch>
-                <Route exact path='/login'>
-                    <Login />
-                </Route>
-                <Route exact path='/'>
-                    <Home />
-                </Route>
-                <Route path='*'>
-                    <Error />
-                </Route>
-            </Switch>
+            <Routes>
+                <Route exact path='/login' element={<Login />}></Route>
+                <Route exact path='/' element={<Home />}></Route>
+                <Route path='*' element={<Error />}></Route>
+            </Routes>
         </Router>
     )
 }

@@ -1,28 +1,25 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { LOGOUT, LOGGED_OUT, LOGOUT_FAILURE } from '../../actions/auth';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Wrapper from './index.css.js';
 
 function AppBar() {
     const dispatch = useDispatch();
     const auth = useSelector(state => state.auth);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const performLogout = async () => {
         try {
             dispatch({ type: LOGOUT });
 
-            // HERE WE SHOULD CALL LOGOUT API. EXAMPLE:
-            // const response = await axios.delete(process.env.API_SERVER_END_POINT + '/logout', { withCredentials: true });
-            // if (response.data.status){
-            //     dispatch({type: LOGGED_OUT});
-            //     history.push('/login')
-            // }
-
-            dispatch({ type: LOGGED_OUT });
-            history.push('/login');
+            // HERE WE CALL LOGOUT API:
+            const response = await axios.delete('http://localhost:4000/logout', { withCredentials: true });
+            if (response.data.status) {
+                dispatch({ type: LOGGED_OUT });
+                navigate('/login')
+            }
         } catch (error) {
             console.log('error during logging out: ' + error);
             dispatch({ type: LOGOUT_FAILURE, payload: error });

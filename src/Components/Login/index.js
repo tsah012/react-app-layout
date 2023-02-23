@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { LOGIN, LOGGED_IN, LOGIN_FAILURE } from '../../actions/auth';
 import axios from 'axios';
@@ -11,11 +11,11 @@ function Login() {
     const [password, setPassword] = useState('');
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (auth.isLogged) {
-            history.push('/');
+            navigate('/');
         }
     });
 
@@ -23,26 +23,21 @@ function Login() {
         try {
             console.log('Start login')
             dispatch({ type: LOGIN });
-            // HERE WE SHOULD CALL LOGIN API AND UPDATE STATE ACCORDING TO RESPONSE. EXAMPLE:
 
-            // const response = await axios.post(process.env.API_SERVER_END_POINT + '/login', {
-            //     mail: mail,
-            //     password: password
-            // }, { withCredentials: true });
+            // HERE WE CALL LOGIN API AND UPDATE STATE ACCORDING TO RESPONSE.
+            // TODO: fix process.env.API_SERVER_END_POINT 
+            const response = await axios.post('http://localhost:4000/login', {
+                mail: mail,
+                password: password
+            }, { withCredentials: true });
 
-            // if (response.data.status) {
-            //     console.log('login success');
-            //     const user = await axios.get(process.env.API_SERVER_END_POINT + '/api/user', { withCredentials: true });
-            //     dispatch({ type: LOGGED_IN, payload: user.data });
-            //     history.push('/');
+            if (response.data.status) {
+                console.log('login success');
+                const user = await axios.get('http://localhost:4000/api/user', { withCredentials: true });
+                dispatch({ type: LOGGED_IN, payload: user.data });
+                navigate('/');
 
-            // }
-
-            // REMOVE WHEN AUTH IS IMPLEMENTED:
-            // Basic user payload sturcture(Can add more date. Depends on srever response sturcture):
-            // {name: 'XYZ'}
-            dispatch({ type: LOGGED_IN, payload: {name: 'Guest'} });
-            history.push('/');
+            }
         }
         catch (error) {
             console.log('error occurred during login. error:\n' + error);
