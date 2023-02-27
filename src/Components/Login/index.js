@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { LOGIN, LOGGED_IN, LOGIN_FAILURE } from '../../actions/auth';
@@ -12,6 +12,8 @@ function Login() {
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const mailErrorElement = useRef(null);
+    const passwordErrorElement = useRef(null);
 
     useEffect(() => {
         if (auth.isLogged) {
@@ -19,29 +21,64 @@ function Login() {
         }
     });
 
-    const performLogin = async () => {
-        try {
-            console.log('Start login')
-            dispatch({ type: LOGIN });
+    useEffect(() => {
+        mailErrorElement.current.textContent = '';
+    }, [mail]);
 
-            // HERE WE CALL LOGIN API AND UPDATE STATE ACCORDING TO RESPONSE.
-            // TODO: fix process.env.API_SERVER_END_POINT 
-            const response = await axios.post('http://localhost:4000/login', {
-                mail: mail,
-                password: password
-            }, { withCredentials: true });
+    useEffect(() => {
+        passwordErrorElement.current.textContent = '';
+    }, [password]);
 
-            if (response.data.status) {
-                console.log('login success');
-                const user = await axios.get('http://localhost:4000/api/user', { withCredentials: true });
-                dispatch({ type: LOGGED_IN, payload: user.data });
-                navigate('/');
+    const validateEmail = () => {
+        let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(mail);
+    }
 
-            }
+    const validatePassword = () => {
+        return password.trim().length;
+    }
+
+    const validateLoginFields = () => {
+        let all_valid = true;
+
+        if (!validateEmail()) {
+            all_valid = false;
+            mailErrorElement.current.textContent = 'EMAIL IS NOT VALID';
         }
-        catch (error) {
-            console.log('error occurred during login. error:\n' + error);
-            dispatch({ type: LOGIN_FAILURE, payload: error.message || '' });
+
+        if (!validatePassword()) {
+            all_valid = false;
+            passwordErrorElement.current.textContent = 'PASSWORD IS NOT VALID';
+        }
+
+        return all_valid;
+    }
+
+    const performLogin = async () => {
+        if (validateLoginFields()) {
+            try {
+                console.log('Start login')
+                dispatch({ type: LOGIN });
+
+                // HERE WE CALL LOGIN API AND UPDATE STATE ACCORDING TO RESPONSE.
+                // TODO: fix process.env.API_SERVER_END_POINT 
+                const response = await axios.post('http://localhost:4000/login', {
+                    mail: mail,
+                    password: password
+                }, { withCredentials: true });
+
+                if (response.data.status) {
+                    console.log('login success');
+                    const user = await axios.get('http://localhost:4000/api/user', { withCredentials: true });
+                    dispatch({ type: LOGGED_IN, payload: user.data });
+                    navigate('/');
+
+                }
+            }
+            catch (error) {
+                console.log('error occurred during login. error:\n' + error);
+                dispatch({ type: LOGIN_FAILURE, payload: error.message || '' });
+            }
         }
     }
 
@@ -52,8 +89,12 @@ function Login() {
                     <h1>Login</h1>
                     <div>
                         <input type="text" name="mail" id="mail" placeholder="Enter Email" value={mail} onChange={(e) => setMail(e.target.value)}></input>
+
                         <input type="text" name="password" id="password" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
+
                         <input type="button" id="loginBtn" value="log in" onClick={performLogin}></input>
+                        <div ref={mailErrorElement} className="errorMessage"></div>
+                        <div ref={passwordErrorElement} className="errorMessage"></div>
                         <div id="formFooter">
                             <a className="underlineHover" href="#">Forgot Password?</a>
                         </div>

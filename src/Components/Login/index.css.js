@@ -22,6 +22,11 @@ a {
   height: 100vh;
 }
 
+.errorMessage {
+  color: red;
+  font-weight: bold;
+}
+
 #formContent {
   -webkit-border-radius: 10px 10px 10px 10px;
   border-radius: 10px 10px 10px 10px;
@@ -141,6 +146,6 @@ input[type=text]:placeholder {
 }
 
 `
-;
+  ;
 
 export default Wrapper
