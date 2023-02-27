@@ -2,11 +2,11 @@ import styled from 'styled-components'
 
 const Wrapper = styled.div`
 
-a {
+.footer {
   color: #92badd;
-  display:inline-block;
   text-decoration: none;
   font-weight: 400;
+  display: inline-block;
 }
 
 .wrapper {
@@ -41,7 +41,7 @@ a {
   text-align: center;
 }
 
-#formFooter {
+.formFooter {
   background-color: #f6f6f6;
   border-top: 1px solid #dce8f1;
   padding: 25px;

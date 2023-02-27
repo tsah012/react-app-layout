@@ -12,8 +12,7 @@ function Login() {
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const mailErrorElement = useRef(null);
-    const passwordErrorElement = useRef(null);
+    const errorElement = useRef(null);
 
     useEffect(() => {
         if (auth.isLogged) {
@@ -22,15 +21,11 @@ function Login() {
     });
 
     useEffect(() => {
-        mailErrorElement.current.textContent = '';
-    }, [mail]);
-
-    useEffect(() => {
-        passwordErrorElement.current.textContent = '';
-    }, [password]);
+        errorElement.current.textContent = '';
+    }, [mail, password]);
 
     const validateEmail = () => {
-        let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(mail);
     }
 
@@ -43,13 +38,13 @@ function Login() {
 
         if (!validateEmail()) {
             all_valid = false;
-            mailErrorElement.current.textContent = 'EMAIL IS NOT VALID';
         }
 
         if (!validatePassword()) {
             all_valid = false;
-            passwordErrorElement.current.textContent = 'PASSWORD IS NOT VALID';
         }
+
+        errorElement.current.textContent = all_valid ? '' : 'EMAIL OR PASSWORD IS NOT VALID';
 
         return all_valid;
     }
@@ -72,12 +67,19 @@ function Login() {
                     const user = await axios.get('http://localhost:4000/api/user', { withCredentials: true });
                     dispatch({ type: LOGGED_IN, payload: user.data });
                     navigate('/');
-
+                }
+                else {
+                    // Login failed in server due to incorrect inputs
+                    errorElement.current.textContent = response.data.message.toUpperCase();
+                    throw (response.data.message);
                 }
             }
-            catch (error) {
-                console.log('error occurred during login. error:\n' + error);
-                dispatch({ type: LOGIN_FAILURE, payload: error.message || '' });
+            catch (err) {
+                console.log('error occurred during login. error:\n' + err || '');
+                dispatch({ type: LOGIN_FAILURE, payload: err || '' });
+                if (!errorElement.current.textContent) {
+                    errorElement.current.textContent = 'UNEXPECTED ERROR';
+                }
             }
         }
     }
@@ -93,10 +95,10 @@ function Login() {
                         <input type="text" name="password" id="password" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
 
                         <input type="button" id="loginBtn" value="log in" onClick={performLogin}></input>
-                        <div ref={mailErrorElement} className="errorMessage"></div>
-                        <div ref={passwordErrorElement} className="errorMessage"></div>
-                        <div id="formFooter">
-                            <a className="underlineHover" href="#">Forgot Password?</a>
+                        <div ref={errorElement} className="errorMessage"></div>
+                        <div className="formFooter">
+                            <div><span className="underlineHover footer">Register</span></div>
+                            <div className="underlineHover footer">Forgot Password?</div>
                         </div>
                     </div>
                 </div>
