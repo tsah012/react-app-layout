@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { LOGIN, LOGGED_IN, LOGIN_FAILURE } from '../../actions/auth';
+import { REGISTRATION_FAILURE } from '../../actions/auth';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import Wrapper from './index.css.js';
 
 
-function Login() {
+function Register() {
+    const [name, setName] = useState('');
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const auth = useSelector(state => state.auth);
@@ -22,7 +24,11 @@ function Login() {
 
     useEffect(() => {
         errorElement.current.textContent = '';
-    }, [mail, password]);
+    }, [name, mail, password]);
+
+    const validateName = () => {
+        return name.trim().length;
+    }
 
     const validateEmail = () => {
         let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -33,8 +39,12 @@ function Login() {
         return password.trim().length;
     }
 
-    const validateLoginFields = () => {
+    const validateFields = () => {
         let all_valid = true;
+
+        if (!validateName()) {
+            all_valid = false;
+        }
 
         if (!validateEmail()) {
             all_valid = false;
@@ -44,39 +54,52 @@ function Login() {
             all_valid = false;
         }
 
-        errorElement.current.textContent = all_valid ? '' : 'EMAIL OR PASSWORD IS NOT VALID';
+        errorElement.current.textContent = all_valid ? '' : 'NAME, EMAIL OR PASSWORD IS NOT VALID';
 
         return all_valid;
     }
 
-    const performLogin = async () => {
-        if (validateLoginFields()) {
+    const performRegister = async () => {
+        if (validateFields()) {
             try {
-                console.log('Start login');
-                dispatch({ type: LOGIN });
+                console.log('Start registration');
 
-                // HERE WE CALL LOGIN API AND UPDATE STATE ACCORDING TO RESPONSE.
                 // TODO: fix process.env.API_SERVER_END_POINT 
-                const response = await axios.post('http://localhost:4000/login', {
+                const response = await axios.post('http://localhost:4000/api/user/add', {
+                    name: name,
                     mail: mail,
                     password: password
-                }, { withCredentials: true });
+                });
 
                 if (response.data.status) {
-                    console.log('login success');
-                    const user = await axios.get('http://localhost:4000/api/user', { withCredentials: true });
-                    dispatch({ type: LOGGED_IN, payload: user.data });
-                    navigate('/');
+                    console.log('registration success');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Regisration Completed. Move to Sign in page?',
+                        showConfirmButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'YES',
+                        cancelButtonText: 'I WANT TO STAY'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            navigate('/login');
+                        } else {
+                            setName('');
+                            setMail('');
+                            setPassword('');
+                        }
+                    })
                 }
                 else {
-                    // Login failed in server due to incorrect inputs
+                    // Registration failed in server due to incorrect inputs
                     errorElement.current.textContent = response.data.message.toUpperCase();
                     throw (response.data.message);
                 }
             }
             catch (err) {
-                console.log('error occurred during login. error:\n' + err || '');
-                dispatch({ type: LOGIN_FAILURE, payload: err || '' });
+                console.log('error occurred during registration. error:\n' + err || '');
+                dispatch({ type: REGISTRATION_FAILURE, payload: err || '' });
                 if (!errorElement.current.textContent) {
                     errorElement.current.textContent = 'UNEXPECTED ERROR';
                 }
@@ -88,22 +111,20 @@ function Login() {
         <Wrapper>
             <div className="wrapper">
                 <div id="formContent">
-                    <h1>SIGN IN</h1>
+                    <h1>CREATE ACCOUNT</h1>
                     <div>
+                        <input type="text" name="name" id="name" placeholder="Enter Name" value={name} onChange={(e) => setName(e.target.value)}></input>
                         <input type="text" name="mail" id="mail" placeholder="Enter Email" value={mail} onChange={(e) => setMail(e.target.value)}></input>
                         <input type="text" name="password" id="password" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
-                        <input type="button" id="loginBtn" value="log in" onClick={performLogin}></input>
+                        <input type="button" id="registerBtn" value="Register" onClick={performRegister}></input>
 
                         <div ref={errorElement} className="errorMessage"></div>
                         <div className="formFooter">
                             <div>
-
-                                <Link to='/register'>
-                                    <span className="underlineHover footer"> Sign Up </span>
+                                <Link to='/login'>
+                                    <span className="underlineHover footer"> Sign In </span>
                                 </Link>
-
                             </div>
-                            <div className="underlineHover footer">Forgot Password?</div>
                         </div>
                     </div>
                 </div>
@@ -112,4 +133,4 @@ function Login() {
     )
 }
 
-export default Login
+export default Register
