@@ -77,6 +77,7 @@ function Register() {
                     Swal.fire({
                         icon: 'success',
                         title: 'Registration Completed. Move to Sign in page?',
+                        allowOutsideClick: false,
                         showConfirmButton: true,
                         showCancelButton: true,
                         confirmButtonText: 'YES',
