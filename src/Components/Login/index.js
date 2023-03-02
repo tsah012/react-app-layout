@@ -56,15 +56,14 @@ function Login() {
                 dispatch({ type: LOGIN });
 
                 // HERE WE CALL LOGIN API AND UPDATE STATE ACCORDING TO RESPONSE.
-                // TODO: fix process.env.API_SERVER_END_POINT 
-                const response = await axios.post('http://localhost:4000/login', {
+                const response = await axios.post(process.env.REACT_APP_API_SERVER_END_POINT + '/login', {
                     mail: mail,
                     password: password
                 }, { withCredentials: true });
 
                 if (response.data.status) {
                     console.log('login success');
-                    const user = await axios.get('http://localhost:4000/api/user', { withCredentials: true });
+                    const user = await axios.get(process.env.REACT_APP_API_SERVER_END_POINT + '/api/user', { withCredentials: true });
                     dispatch({ type: LOGGED_IN, payload: user.data });
                     navigate('/');
                 }

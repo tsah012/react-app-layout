@@ -15,7 +15,7 @@ function AppBar() {
             dispatch({ type: LOGOUT });
 
             // HERE WE CALL LOGOUT API:
-            const response = await axios.delete('http://localhost:4000/logout', { withCredentials: true });
+            const response = await axios.delete(process.env.REACT_APP_API_SERVER_END_POINT + '/logout', { withCredentials: true });
             if (response.data.status) {
                 dispatch({ type: LOGGED_OUT });
                 navigate('/login')

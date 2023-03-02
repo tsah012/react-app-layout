@@ -65,7 +65,7 @@ function Register() {
                 console.log('Start registration');
 
                 // TODO: fix process.env.API_SERVER_END_POINT 
-                const response = await axios.post('http://localhost:4000/api/user/add', {
+                const response = await axios.post(process.env.REACT_APP_API_SERVER_END_POINT + '/api/user/add', {
                     name: name,
                     mail: mail,
                     password: password

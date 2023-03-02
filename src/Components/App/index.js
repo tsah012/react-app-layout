@@ -12,7 +12,7 @@ function App() {
             // IF USER IS ALREADY LOGGED IN - DATA WILL RETURN AND WE UPDATE STATE ACCORDINGLY.
             // OTHERWISE - STATE STARTS AS LOGGED OUT AND WE WILL BE REDIRECTED TO LOGIN PAGE.
             try {
-                const response = await axios.get('http://localhost:4000/api/user', { withCredentials: true });
+                const response = await axios.get(process.env.REACT_APP_API_SERVER_END_POINT + '/api/user', { withCredentials: true });
 
                 if (response.status === 200) {
                     dispatch({ type: LOGGED_IN, payload: response.data });
