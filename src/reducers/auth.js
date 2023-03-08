@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT, LOGGED_IN, LOGGED_OUT, LOGIN_FAILURE, LOGOUT_FAILURE, REGISTRATION_FAILURE } from "../actions/auth";
+import { LOGIN, LOGOUT, LOGGED_IN, LOGGED_OUT, LOGIN_FAILURE, LOGOUT_FAILURE, REGISTRATION_FAILURE, ERROR } from "../actions/auth";
 
 const initialState = {
     isLogged: false,
@@ -56,6 +56,13 @@ const reducer = (state = initialState, action) => {
                 isLogged: false,
                 isLoading: false,
                 user: null,
+                error: action.payload
+            }
+        case ERROR:
+            return {
+                isLogged: state.isLogged,
+                isLoading: state.isLoading,
+                user: state.user,
                 error: action.payload
             }
         default:

@@ -5,3 +5,4 @@ export const LOGGED_OUT = 'LOGGED_OUT';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
 export const REGISTRATION_FAILURE = 'REGISTRATION_FAILURE';
+export const ERROR = 'ERROR';

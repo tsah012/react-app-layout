@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { LOGIN, LOGGED_IN, LOGIN_FAILURE } from '../../actions/auth';
+import { LOGIN, LOGGED_IN, LOGIN_FAILURE, ERROR } from '../../actions/auth';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import Wrapper from './index.css.js';
 
 
@@ -83,6 +84,45 @@ function Login() {
         }
     }
 
+    const forgotPassword = async () => {
+        try {
+            const { value: email } = await Swal.fire({
+                allowOutsideClick: false,
+                showCancelButton: true,
+                title: 'Input user email address',
+                input: 'email',
+                inputLabel: 'Email with password reset link will be sent to this address if user is registered with this email',
+                inputPlaceholder: 'Enter email address'
+            })
+
+            if (email) {
+                const response = await axios.post(process.env.REACT_APP_API_SERVER_END_POINT + '/forgot-password', {
+                    mail: email
+                });
+
+                if (response.data.status) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Email with password reset ling sent',
+                        text: 'Please check your mail box',
+                        allowOutsideClick: false
+                    });
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: response.data.message,
+                        allowOutsideClick: false
+                    });
+                }
+            }
+        }
+        catch (err) {
+            console.log('error occurred during login. error:\n' + err || '');
+            dispatch({ type: ERROR, payload: err || '' });
+        }
+    }
+
     return (
         <Wrapper>
             <div className="wrapper">
@@ -102,7 +142,7 @@ function Login() {
                                 </Link>
 
                             </div>
-                            <div className="underlineHover footer">Forgot Password?</div>
+                            <div className="underlineHover footer" onClick={forgotPassword}>Forgot Password?</div>
                         </div>
                     </div>
                 </div>
