@@ -91,7 +91,6 @@ function Login() {
                 showCancelButton: true,
                 title: 'Input user email address',
                 input: 'email',
-                inputLabel: 'Email with password reset link will be sent to this address if user is registered with this email',
                 inputPlaceholder: 'Enter email address'
             })
 
@@ -103,8 +102,8 @@ function Login() {
                 if (response.data.status) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Email with password reset ling sent',
-                        text: 'Please check your mail box',
+                        title: 'Email with password reset link sent',
+                        text: 'Please check your mail box including spam',
                         allowOutsideClick: false
                     });
                 }
