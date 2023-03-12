@@ -117,8 +117,13 @@ function Login() {
             }
         }
         catch (err) {
-            console.log('error occurred during login. error:\n' + err || '');
+            console.log('error occurred. error:\n' + err || '');
             dispatch({ type: ERROR, payload: err || '' });
+            Swal.fire({
+                icon: 'error',
+                title: 'Something went wrong! Please try again in a few minutes',
+                allowOutsideClick: false
+            });
         }
     }
 
