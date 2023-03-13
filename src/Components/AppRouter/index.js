@@ -6,12 +6,13 @@ import AppBar from '../AppBar';
 import Home from '../Home';
 import Error from '../Error';
 import ResetPassword from '../ResetPassword';
+import AppBarNew from '../AppBarNew';
 
 
 function AppRouter() {
     return (
         <Router>
-            <AppBar />
+            <AppBarNew />
             <Routes>
                 <Route exact path='/login' element={<Login />}></Route>
                 <Route exact path='/register' element={<Register />}></Route>
